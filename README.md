@@ -24,14 +24,6 @@ npx create-remix@latest --template remix-run/indie-stack
 - Linting with [ESLint](https://eslint.org)
 - Static Types with [TypeScript](https://typescriptlang.org)
 
-Not a fan of bits of the stack? Fork it, change it, and use `npx create-remix --template your/repo`! Make it your own.
-
-## Quickstart
-
-Click this button to create a [Gitpod](https://gitpod.io) workspace with the project set up and Fly pre-installed
-
-[![Gitpod Ready-to-Code](https://img.shields.io/badge/Gitpod-Ready--to--Code-blue?logo=gitpod)](https://gitpod.io/#https://github.com/remix-run/indie-stack/tree/main)
-
 ## Development
 
 - Initial setup:
@@ -80,8 +72,11 @@ Prior to your first deployment, you'll need to do a few things:
 - Create two apps on Fly, one for staging and one for production:
 
   ```sh
-  fly apps create djmocracy-13e7
-  fly apps create djmocracy-13e7-staging
+  <!-- fly apps create djmocracy-13e7 -->
+  <!-- fly apps create djmocracy-13e7-staging -->
+
+  fly apps create djmocracy-1221
+  fly apps create djmocracy-1221-staging
   ```
 
   > **Note:** Make sure this name matches the `app` set in your `fly.toml` file. Otherwise, you will not be able to deploy.

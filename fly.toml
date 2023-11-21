@@ -1,4 +1,5 @@
-app = "djmocracy-13e7"
+# app = "djmocracy-13e7"
+app = "djmocracy-1221"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = [ ]
