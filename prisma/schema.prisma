@@ -14,8 +14,9 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  password Password?
-  notes    Note[]
+  password  Password?
+  notes     Note[]
+  playlists Playlist[]
 }
 
 model Password {
@@ -35,4 +36,32 @@ model Note {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
   userId String
+}
+
+model Song {
+  id     String @id @default(cuid())
+  title  String
+  artist String
+
+  // implicit
+  playlists Playlist[]
+}
+
+model Playlist {
+  id     String  @id @default(cuid())
+  name   String
+  owner  User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String?
+
+  // implicit
+  songs Song[]
+}
+
+model UserVotes {
+  id   String @id @default(cuid())
+  vote Int
+
+  userId     String
+  playlistId String
+  songId     String
 }

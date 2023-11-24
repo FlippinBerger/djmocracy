@@ -38,12 +38,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   }
 
-  if (password.length < 8) {
-    return json(
-      { errors: { email: null, password: "Password is too short" } },
-      { status: 400 },
-    );
-  }
+  // if (password.length < 8) {
+  //   return json(
+  //     { errors: { email: null, password: "Password is too short" } },
+  //     { status: 400 },
+  //   );
+  // }
 
   const user = await verifyLogin(email, password);
 
@@ -66,7 +66,7 @@ export const meta: MetaFunction = () => [{ title: "Login" }];
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/notes";
+  const redirectTo = searchParams.get("redirectTo") || "/";
   const actionData = useActionData<typeof action>();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -98,7 +98,7 @@ export default function LoginPage() {
                 // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus={true}
                 name="email"
-                type="email"
+                // type="email"
                 autoComplete="email"
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby="email-error"

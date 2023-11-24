@@ -1,5 +1,6 @@
 import type { Password, User } from "@prisma/client";
 import bcrypt from "bcryptjs";
+import * as crypto from 'crypto';
 
 import { prisma } from "~/db.server";
 
@@ -61,3 +62,36 @@ export async function verifyLogin(
 
   return userWithoutPassword;
 }
+
+export function encryptToken(token: string): string {
+  const algo = 'aes-256-gcm';
+  var key = Buffer.from(process.env.AES_KEY!, 'hex');
+
+  // add uniqueness to AES IV with maybe user id or something
+  const iv = Buffer.from(process.env.AES_IV!, 'hex');
+
+
+  const cipher = crypto.createCipheriv(algo, key, iv);
+  var encrypted = cipher.update(token, 'utf-8', 'hex');
+
+  return encrypted;
+}
+
+export function decryptToken(token: string): string {
+  const algo = 'aes-256-gcm';
+  const key = Buffer.from(process.env.AES_KEY!, 'hex');
+
+  // add uniqueness to AES IV with maybe user id or something
+  const iv = Buffer.from(process.env.AES_IV!, 'hex');
+
+  const decipher = crypto.createDecipheriv(algo, key, iv);
+  let decrypted = decipher.update(token, 'hex', 'utf-8');
+
+  return decrypted;
+}
+
+export async function storeTokens(accessToken: string, refreshToken: string, expiresIn: number) {
+
+}
+
+

@@ -4,14 +4,14 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "rachel@remix.run";
+  const email = "chris";
 
   // cleanup the existing database
   await prisma.user.delete({ where: { email } }).catch(() => {
     // no worries if it doesn't exist yet
   });
 
-  const hashedPassword = await bcrypt.hash("racheliscool", 10);
+  const hashedPassword = await bcrypt.hash("pass", 10);
 
   const user = await prisma.user.create({
     data: {
@@ -39,6 +39,39 @@ async function seed() {
       userId: user.id,
     },
   });
+
+  let songIds = [];
+
+  let song = await prisma.song.create({
+    data: {
+      title: "Rockstar",
+      artist: "Post Malone",
+    }
+  });
+  songIds.push(song.id);
+
+  song = await prisma.song.create({
+    data: {
+      title: "Sunflower",
+      artist: "Post Malone",
+    }
+  });
+  songIds.push(song.id);
+
+  song = await prisma.song.create({
+    data: {
+      title: "Wow",
+      artist: "Post Malone",
+    }
+  });
+  songIds.push(song.id);
+
+  await prisma.playlist.create({
+    data: {
+      name: "Bangerz",
+      userId: user.id,
+    }
+  })
 
   console.log(`Database has been seeded. 🌱`);
 }
