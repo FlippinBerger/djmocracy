@@ -1,6 +1,14 @@
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 
+import { storeTokens } from "~/models/user.server";
+import { getUserId } from "~/session.server";
+
 export async function loader({ request }: LoaderFunctionArgs) {
+  const userId = await getUserId(request);
+  if (!userId) {
+    return json('user must be logged in to connect to Spotify');
+  }
+
   const url = new URL(request.url);
   const error = url.searchParams.get("error")
 
@@ -37,11 +45,13 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const jsonRes = await res.json();
-  console.log('access_token: ' + jsonRes.access_token);
-  console.log('token_type: ' + jsonRes.token_type);
-  console.log('scope: ' + jsonRes.scope);
-  console.log('expires_in: ' + jsonRes.expires_in);
-  console.log('refresh_token: ' + jsonRes.refresh_token);
+  // console.log('access_token: ' + jsonRes.access_token);
+  // console.log('token_type: ' + jsonRes.token_type);
+  // console.log('scope: ' + jsonRes.scope);
+  // console.log('expires_in: ' + jsonRes.expires_in);
+  // console.log('refresh_token: ' + jsonRes.refresh_token);
+
+  await storeTokens(userId, jsonRes.access_token, jsonRes.refresh_token, jsonRes.expires_in);
 
   return redirect('/');
 }

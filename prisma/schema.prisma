@@ -1,67 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
-generator client {
-  provider = "prisma-client-js"
-}
-
 model User {
-  id    String @id @default(cuid())
-  email String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  password  Password?
-  notes     Note[]
-  playlists Playlist[]
+  id            String     @id @default(cuid())
+  username      String
+  email         String     @unique
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  spotifyUserId String
+  accessToken   String
+  refreshToken  String
+  expiresAt     DateTime
+  notes         Note[]
+  password      Password?
+  playlists     Playlist[]
 }
 
 model Password {
-  hash String
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  hash   String
   userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Note {
-  id    String @id @default(cuid())
-  title String
-  body  String
-
+  id        String   @id @default(cuid())
+  title     String
+  body      String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
-  userId String
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Song {
-  id     String @id @default(cuid())
-  title  String
-  artist String
-
-  // implicit
-  playlists Playlist[]
+  id         String @id @default(cuid())
+  title      String
+  artist     String
+  spotifyUri String
 }
 
 model Playlist {
-  id     String  @id @default(cuid())
-  name   String
-  owner  User?   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId String?
+  id        String  @id @default(cuid())
+  spotifyId String
+  name      String
+  public    Boolean
+  userId    String
+  owner     User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  // implicit
-  songs Song[]
+model PlaylistSongs {
+  id         String @id @default(cuid())
+  playlistId String
+  songId     String
 }
 
 model UserVotes {
-  id   String @id @default(cuid())
-  vote Int
-
+  id         String @id @default(cuid())
+  vote       Int
   userId     String
   playlistId String
   songId     String
+
+  @@unique([userId, playlistId, songId])
+}
+
+model UserParties {
+  id         String @id @default(cuid())
+  userId     String
+  playlistId String
 }

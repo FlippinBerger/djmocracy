@@ -14,17 +14,22 @@ export async function getUserByEmail(email: User["email"]) {
   return prisma.user.findUnique({ where: { email } });
 }
 
-export async function createUser(email: User["email"], password: string) {
+export async function createUser(email: User["email"], password: string, username?: string) {
   const hashedPassword = await bcrypt.hash(password, 10);
 
   return prisma.user.create({
     data: {
       email,
+      username: username || "",
       password: {
         create: {
           hash: hashedPassword,
         },
       },
+      spotifyUserId: "",
+      accessToken: "",
+      refreshToken: "",
+      expiresAt: new Date(),
     },
   });
 }
@@ -90,8 +95,19 @@ export function decryptToken(token: string): string {
   return decrypted;
 }
 
-export async function storeTokens(accessToken: string, refreshToken: string, expiresIn: number) {
+export async function storeTokens(userId: string, accessToken: string, refreshToken: string, expiresIn: number) {
+  var expiresAt = new Date();
+  expiresAt.setSeconds(expiresAt.getSeconds() + expiresIn);
 
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      accessToken,
+      refreshToken,
+      expiresAt,
+    }
+  });
 }
-
 
