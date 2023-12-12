@@ -38,12 +38,12 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   }
 
-  if (password.length < 8) {
-    return json(
-      { errors: { email: null, password: "Password is too short" } },
-      { status: 400 },
-    );
-  }
+  // if (password.length < 8) {
+  //   return json(
+  //     { errors: { email: null, password: "Password is too short" } },
+  //     { status: 400 },
+  //   );
+  // }
 
   const user = await verifyLogin(email, password);
 
@@ -66,7 +66,7 @@ export const meta: MetaFunction = () => [{ title: "Login" }];
 
 export default function LoginPage() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") || "/notes";
+  const redirectTo = searchParams.get("redirectTo") || "/";
   const actionData = useActionData<typeof action>();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
@@ -80,13 +80,13 @@ export default function LoginPage() {
   }, [actionData]);
 
   return (
-    <div className="flex min-h-full flex-col justify-center">
+    <div className="flex min-h-full flex-col justify-center bg-slate-950">
       <div className="mx-auto w-full max-w-md px-8">
         <Form method="post" className="space-y-6">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Email address
             </label>
@@ -98,7 +98,7 @@ export default function LoginPage() {
                 // eslint-disable-next-line jsx-a11y/no-autofocus
                 autoFocus={true}
                 name="email"
-                type="email"
+                // type="email"
                 autoComplete="email"
                 aria-invalid={actionData?.errors?.email ? true : undefined}
                 aria-describedby="email-error"
@@ -115,7 +115,7 @@ export default function LoginPage() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Password
             </label>
@@ -155,12 +155,12 @@ export default function LoginPage() {
               />
               <label
                 htmlFor="remember"
-                className="ml-2 block text-sm text-gray-900"
+                className="ml-2 block text-sm text-gray-300"
               >
                 Remember me
               </label>
             </div>
-            <div className="text-center text-sm text-gray-500">
+            <div className="text-center text-sm text-gray-300">
               Don&apos;t have an account?{" "}
               <Link
                 className="text-blue-500 underline"

@@ -21,6 +21,7 @@ export const action = async ({ request }: ActionFunctionArgs) => {
   const formData = await request.formData();
   const email = formData.get("email");
   const password = formData.get("password");
+  const username = formData.get("username");
   const redirectTo = safeRedirect(formData.get("redirectTo"), "/");
 
   if (!validateEmail(email)) {
@@ -57,7 +58,9 @@ export const action = async ({ request }: ActionFunctionArgs) => {
     );
   }
 
-  const user = await createUser(email, password);
+  var newName = (typeof username === "string") ? username : "";
+
+  const user = await createUser(email, password, newName);
 
   return createUserSession({
     redirectTo,
@@ -71,10 +74,11 @@ export const meta: MetaFunction = () => [{ title: "Sign Up" }];
 
 export default function Join() {
   const [searchParams] = useSearchParams();
-  const redirectTo = searchParams.get("redirectTo") ?? undefined;
+  const redirectTo = searchParams.get("redirectTo") ?? "/";
   const actionData = useActionData<typeof action>();
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const usernameRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (actionData?.errors?.email) {
@@ -85,13 +89,13 @@ export default function Join() {
   }, [actionData]);
 
   return (
-    <div className="flex min-h-full flex-col justify-center">
+    <div className="flex min-h-full flex-col justify-center bg-slate-950">
       <div className="mx-auto w-full max-w-md px-8">
         <Form method="post" className="space-y-6">
           <div>
             <label
               htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Email address
             </label>
@@ -120,7 +124,7 @@ export default function Join() {
           <div>
             <label
               htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-gray-300"
             >
               Password
             </label>
@@ -143,6 +147,27 @@ export default function Join() {
             </div>
           </div>
 
+          <div>
+            <label
+              htmlFor="username"
+              className="block text-sm font-medium text-gray-300"
+            >
+              Username
+            </label>
+            <div className="mt-1">
+              <input
+                ref={usernameRef}
+                id="username"
+                required
+                // eslint-disable-next-line jsx-a11y/no-autofocus
+                name="username"
+                type="username"
+                autoComplete="username"
+                className="w-full rounded border border-gray-500 px-2 py-1 text-lg"
+              />
+            </div>
+          </div>
+
           <input type="hidden" name="redirectTo" value={redirectTo} />
           <button
             type="submit"
@@ -151,7 +176,7 @@ export default function Join() {
             Create Account
           </button>
           <div className="flex items-center justify-center">
-            <div className="text-center text-sm text-gray-500">
+            <div className="text-center text-sm text-gray-300">
               Already have an account?{" "}
               <Link
                 className="text-blue-500 underline"
