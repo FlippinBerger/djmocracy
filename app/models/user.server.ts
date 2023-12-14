@@ -111,3 +111,14 @@ export async function storeTokens(userId: string, accessToken: string, refreshTo
   });
 }
 
+export async function addSpotifyId(userId: string, spotifyId: string) {
+  await prisma.user.update({
+    where: {
+      id: userId,
+    },
+    data: {
+      spotifyUserId: spotifyId,
+    }
+  });
+}
+

@@ -1,6 +1,7 @@
 import invariant from "tiny-invariant";
 
 import { getUserById, storeTokens } from "~/models/user.server";
+import type { User } from "@prisma/client";
 
 export async function login() {
   var scope = 'user-read-private user-read-email playlist-modify-public playlist-read-collaborative';
@@ -25,7 +26,8 @@ export function getToken(): string {
   return ""
 }
 
-export async function refreshToken(userId: string, refreshToken: string) {
+export async function refreshToken(user: User) {
+  console.log('refreshing the token');
   const url = "https://accounts.spotify.com/api/token";
 
   const payload = {
@@ -35,7 +37,7 @@ export async function refreshToken(userId: string, refreshToken: string) {
     },
     body: new URLSearchParams({
       grant_type: 'refresh_token',
-      refresh_token: refreshToken,
+      refresh_token: user.refreshToken,
       client_id: process.env.SPOTIFY_CLIENT_ID!,
     }),
   };
@@ -43,13 +45,22 @@ export async function refreshToken(userId: string, refreshToken: string) {
   const res = await fetch(url, payload);
   const j = await res.json();
 
-  await storeTokens(userId, j.accessToken, j.refreshToken, j.expires_in);
+  await storeTokens(user.id, j.accessToken, j.refreshToken, j.expires_in);
 }
 
 export async function getAuthHeader(userId: string): Promise<string> {
-  const user = getUserById(userId);
+  const user = await getUserById(userId);
 
-  var accessToken = "";
+  if (!user) {
+    // TODO handle error
+    console.log('user isnt real');
+    return "";
+  }
 
-  return `Bearer ${accessToken}`;
+  let now = new Date();
+  if (now >= user.expiresAt) {
+    refreshToken(user);
+  }
+
+  return `Bearer ${user.accessToken}`;
 }

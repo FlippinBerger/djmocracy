@@ -4,6 +4,7 @@ export type Song = {
   artist: string,
   spotifyUri: string,
   userVotes: UserVote[],
+  voteCount: number,
 }
 
 export type UserVote = {

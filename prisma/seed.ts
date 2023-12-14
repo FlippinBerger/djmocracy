@@ -4,18 +4,22 @@ import bcrypt from "bcryptjs";
 const prisma = new PrismaClient();
 
 async function seed() {
-  const email = "chris";
+  const email = "flippinberger@gmail.com";
 
   // cleanup the existing database
   await prisma.user.delete({ where: { email } }).catch(() => {
     // no worries if it doesn't exist yet
   });
 
+  await prisma.song.deleteMany({});
+  await prisma.playlist.deleteMany({});
+
   const hashedPassword = await bcrypt.hash("pass", 10);
 
   const user = await prisma.user.create({
     data: {
       email,
+      username: "flippin",
       password: {
         create: {
           hash: hashedPassword,
@@ -24,6 +28,7 @@ async function seed() {
       accessToken: "",
       refreshToken: "",
       expiresAt: new Date(),
+      spotifyUserId: "",
     },
   });
 
@@ -49,6 +54,7 @@ async function seed() {
     data: {
       title: "Rockstar",
       artist: "Post Malone",
+      spotifyUri: "",
     }
   });
   songIds.push(song.id);
@@ -57,6 +63,7 @@ async function seed() {
     data: {
       title: "Sunflower",
       artist: "Post Malone",
+      spotifyUri: "",
     }
   });
   songIds.push(song.id);
@@ -65,6 +72,7 @@ async function seed() {
     data: {
       title: "Wow",
       artist: "Post Malone",
+      spotifyUri: "",
     }
   });
   songIds.push(song.id);
@@ -73,6 +81,8 @@ async function seed() {
     data: {
       name: "Bangerz",
       userId: user.id,
+      spotifyId: "",
+      public: true,
     }
   })
 

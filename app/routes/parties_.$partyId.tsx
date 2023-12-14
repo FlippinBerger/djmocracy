@@ -81,7 +81,7 @@ export default function PartyPage() {
 
   return (
     <main className="h-full flex flex-col p-4 bg-slate-950 text-gray-300">
-      <h3 className="text-2xl font-bold">{data.playlist.name} by {data.playlist.owner.username}</h3>
+      <h3 className="text-2xl font-bold">{data.playlist.name} by {data.playlist.owner.username || 'flippin'}</h3>
       <SongList songs={data.songs} voterMap={data.voterMap} partyId={data.playlist.id} />
       <Outlet />
     </main>

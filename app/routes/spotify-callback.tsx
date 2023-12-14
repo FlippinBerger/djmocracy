@@ -1,6 +1,6 @@
 import { LoaderFunctionArgs, json, redirect } from "@remix-run/node";
 
-import { storeTokens } from "~/models/user.server";
+import { addSpotifyId, storeTokens } from "~/models/user.server";
 import { getUserId } from "~/session.server";
 
 export async function loader({ request }: LoaderFunctionArgs) {
@@ -45,13 +45,24 @@ export async function loader({ request }: LoaderFunctionArgs) {
   }
 
   const jsonRes = await res.json();
-  // console.log('access_token: ' + jsonRes.access_token);
-  // console.log('token_type: ' + jsonRes.token_type);
-  // console.log('scope: ' + jsonRes.scope);
-  // console.log('expires_in: ' + jsonRes.expires_in);
-  // console.log('refresh_token: ' + jsonRes.refresh_token);
-
   await storeTokens(userId, jsonRes.access_token, jsonRes.refresh_token, jsonRes.expires_in);
+
+  const profileUrl = "https://api.spotify.com/v1/me";
+  const profileRes = await fetch(profileUrl, {
+    method: 'GET',
+    headers: {
+      // 'content-type': 'application/x-www-form-urlencoded',
+      'Authorization': `Bearer ${jsonRes.access_token}`,
+    },
+  });
+
+  if (profileRes.status !== 200 && profileRes.status !== 204) {
+    console.log("res is", res);
+    return json("Unable to fetch current user from spotify", { status: 500 });
+  }
+
+  const profileResJson = await profileRes.json();
+  await addSpotifyId(userId, profileResJson.id);
 
   return redirect('/');
 }

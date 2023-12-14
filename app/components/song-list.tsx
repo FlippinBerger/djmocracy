@@ -19,7 +19,7 @@ export default function SongList({ songs, voterMap, partyId }: SongListProps) {
       {songs.map((song) => {
         return (
           <li key={song.id + song.title}>
-            <SongRow song={song} vote={voterMap[song.id]} partyId={partyId} />
+            <SongRow song={song} vote={voterMap[song.id]} voteCount={song.voteCount} partyId={partyId} />
           </li>
         )
       })}
