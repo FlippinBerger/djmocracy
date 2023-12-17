@@ -56,9 +56,10 @@ model Playlist {
 }
 
 model PlaylistSongs {
-  id         String @id @default(cuid())
+  id         String  @id @default(cuid())
   playlistId String
   songId     String
+  played     Boolean
 }
 
 model UserVotes {

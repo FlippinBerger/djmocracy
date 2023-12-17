@@ -40,8 +40,6 @@ export async function createPlaylist(name: string, userId: string) {
 
   const spotifyPlaylistId = await spotifyCreatePlaylist(name, user);
 
-  console.log('spotifyId', spotifyPlaylistId);
-
   const playlist = await prisma.playlist.create({
     data: {
       name: name,
@@ -92,6 +90,7 @@ export async function addSongToPlaylist(song: Song, playlistId: string, userId: 
     data: {
       playlistId: playlistId,
       songId: song.id,
+      played: false,
     }
   })
 

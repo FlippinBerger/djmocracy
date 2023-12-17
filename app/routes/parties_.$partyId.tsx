@@ -2,6 +2,7 @@ import { json, ActionFunctionArgs, LoaderFunctionArgs, MetaFunction } from "@rem
 import { useLoaderData, Outlet } from "@remix-run/react";
 
 import invariant from "tiny-invariant";
+import { MusicPlayer } from "~/components/player";
 import SongList from "~/components/song-list";
 import { getPlaylist, getSongsWithVoterInfo, getVoterMap, updateVote } from "~/models/playlist.server";
 import { VoteStatus } from "~/models/types";
@@ -21,7 +22,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const songs = await getSongsWithVoterInfo(playlist.id, userId);
   const voterMap = await getVoterMap(playlist.id, userId);
 
-  return json({ playlist, songs, voterMap });
+  return json({ userId, playlist, songs, voterMap });
 };
 
 export const action = async ({ request }: ActionFunctionArgs) => {
@@ -79,9 +80,12 @@ const getVoteVal = (vs: string): VoteStatus => {
 export default function PartyPage() {
   const data = useLoaderData<typeof loader>();
 
+  const isOwner = data.userId === data.playlist.owner.id;
+
   return (
     <main className="h-full flex flex-col p-4 bg-slate-950 text-gray-300">
       <h3 className="text-2xl font-bold">{data.playlist.name} by {data.playlist.owner.username || 'flippin'}</h3>
+      {isOwner && <MusicPlayer />}
       <Outlet />
       <SongList songs={data.songs} voterMap={data.voterMap} partyId={data.playlist.id} />
     </main>
