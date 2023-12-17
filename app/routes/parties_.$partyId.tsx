@@ -13,7 +13,7 @@ export const loader = async ({ params, request }: LoaderFunctionArgs) => {
   const userId = await requireUserId(request);
   invariant(params.partyId, "partyId not found in url params");
 
-  const playlist = await getPlaylist({ id: params.partyId, userId });
+  const playlist = await getPlaylist(params.partyId);
   if (!playlist) {
     throw new Response("Not Found", { status: 404 });
   }
@@ -82,8 +82,8 @@ export default function PartyPage() {
   return (
     <main className="h-full flex flex-col p-4 bg-slate-950 text-gray-300">
       <h3 className="text-2xl font-bold">{data.playlist.name} by {data.playlist.owner.username || 'flippin'}</h3>
-      <SongList songs={data.songs} voterMap={data.voterMap} partyId={data.playlist.id} />
       <Outlet />
+      <SongList songs={data.songs} voterMap={data.voterMap} partyId={data.playlist.id} />
     </main>
   );
 }

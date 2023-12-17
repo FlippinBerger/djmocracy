@@ -39,10 +39,11 @@ model Note {
 }
 
 model Song {
-  id         String @id @default(cuid())
-  title      String
-  artist     String
-  spotifyUri String
+  id              String @id @default(cuid())
+  title           String
+  artist          String
+  spotifyUri      String
+  albumArtworkUrl String
 }
 
 model Playlist {

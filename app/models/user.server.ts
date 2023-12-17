@@ -104,9 +104,9 @@ export async function storeTokens(userId: string, accessToken: string, refreshTo
       id: userId,
     },
     data: {
-      accessToken,
-      refreshToken,
-      expiresAt,
+      accessToken: accessToken,
+      refreshToken: refreshToken,
+      expiresAt: expiresAt,
     }
   });
 }

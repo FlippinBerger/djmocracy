@@ -55,6 +55,7 @@ async function seed() {
       title: "Rockstar",
       artist: "Post Malone",
       spotifyUri: "",
+      albumArtworkUrl: "",
     }
   });
   songIds.push(song.id);
@@ -64,6 +65,7 @@ async function seed() {
       title: "Sunflower",
       artist: "Post Malone",
       spotifyUri: "",
+      albumArtworkUrl: "",
     }
   });
   songIds.push(song.id);
@@ -73,6 +75,7 @@ async function seed() {
       title: "Wow",
       artist: "Post Malone",
       spotifyUri: "",
+      albumArtworkUrl: "",
     }
   });
   songIds.push(song.id);

@@ -27,29 +27,30 @@ export function getToken(): string {
 }
 
 export async function refreshToken(user: User) {
-  console.log('refreshing the token');
   const url = "https://accounts.spotify.com/api/token";
+  const clientIdAndSecret = `${process.env.SPOTIFY_CLIENT_ID!}:${process.env.SPOTIFY_CLIENT_SECRET!}`
+  const authPayload = btoa(clientIdAndSecret);
 
   const payload = {
     method: 'POST',
     headers: {
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'Authorization': `Basic ${authPayload}`
     },
     body: new URLSearchParams({
       grant_type: 'refresh_token',
       refresh_token: user.refreshToken,
-      client_id: process.env.SPOTIFY_CLIENT_ID!,
     }),
   };
 
   const res = await fetch(url, payload);
   const j = await res.json();
 
-  await storeTokens(user.id, j.accessToken, j.refreshToken, j.expires_in);
+  await storeTokens(user.id, j.access_token, user.refreshToken, j.expires_in);
 }
 
 export async function getAuthHeader(userId: string): Promise<string> {
-  const user = await getUserById(userId);
+  var user = await getUserById(userId);
 
   if (!user) {
     // TODO handle error
@@ -58,8 +59,9 @@ export async function getAuthHeader(userId: string): Promise<string> {
   }
 
   let now = new Date();
+
   if (now >= user.expiresAt) {
-    refreshToken(user);
+    await refreshToken(user);
   }
 
   return `Bearer ${user.accessToken}`;

@@ -5,15 +5,10 @@ import { prisma } from "~/db.server";
 import { getUserById } from "./user.server";
 import { createPlaylist as spotifyCreatePlaylist } from "~/spotify/playlist.server";
 
-export function getPlaylist({
-  id,
-  userId,
-}: Pick<Playlist, "id"> & {
-  userId: User["id"];
-}) {
+export function getPlaylist(id: string) {
   return prisma.playlist.findFirst({
     select: { id: true, name: true, owner: true },
-    where: { id, userId },
+    where: { id },
   });
 }
 
@@ -71,12 +66,13 @@ export async function createPlaylist(name: string, userId: string) {
   return playlist;
 }
 
-export async function createSong(title: string, artist: string) {
+export async function createSong(title: string, artist: string, spotifyUri: string, artUrl: string) {
   return await prisma.song.create({
     data: {
       title,
       artist,
-      spotifyUri: ""
+      spotifyUri,
+      albumArtworkUrl: artUrl,
     }
   })
 }

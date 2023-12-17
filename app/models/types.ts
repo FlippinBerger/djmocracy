@@ -13,3 +13,10 @@ export type UserVote = {
 }
 
 export type VoteStatus = -1 | 0 | 1;
+
+export type SpotifySongResponse = {
+  title: string,
+  artist: string,
+  spotifyUri: string,
+  albumArtworkUrl: string,
+}
