@@ -26,8 +26,8 @@ type Party struct {
 }
 
 type Song struct {
-    Title string `bson:"title"`
-    Artist string `bson:"artist"`
-    AlbumArtURL string `bson:"album_art_url"`
-    Votes int `bson:"votes"`
+    Title string `bson:"title" json:"title"`
+    Artist string `bson:"artist" json:"artist"`
+    AlbumArtURL string `bson:"album_art_url" json:"album_art_url"`
+    Votes int `bson:"votes" json:"votes"`
 }

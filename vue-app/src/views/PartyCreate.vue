@@ -2,12 +2,14 @@
 import { ref } from 'vue';
 import { useUsersStore } from '@/stores/users';
 import {DateTime as DT} from 'luxon';
+import { useRouter } from 'vue-router';
 
 const partyName = ref("");
 const partyDate = ref("")
 const partyTime = ref("");
 
 const store = useUsersStore();
+const router = useRouter();
 
 const getPartyTime = (): string => {
     var datePieces = partyDate.value.split('-').map((s) => +s);
@@ -45,6 +47,7 @@ const createParty = async () => {
     }
 
     const data = await response.json();
+    router.push(`/parties/${data.partyId}`)
 }
 </script>
 

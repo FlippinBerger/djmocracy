@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/flippinberger/djmocracy/db"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
@@ -35,4 +36,19 @@ func CreateParty(djDB *db.DJDB, name string, time time.Time, owner string) (stri
     }
 
     return "", fmt.Errorf("couldn't parse ObjectID to hex string")
+}
+
+func GetParty(djDB *db.DJDB, id string) (*Party, error) {
+    partyId, err := primitive.ObjectIDFromHex(id)
+    if err != nil {
+        return nil, err
+    }
+
+    var party Party
+    err = djDB.DB.Collection(PartiesCollection).FindOne(context.Background(), bson.M{"_id": partyId}).Decode(&party)
+    if err != nil {
+        return nil, err
+    }
+
+    return &party, nil
 }

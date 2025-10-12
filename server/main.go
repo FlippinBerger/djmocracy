@@ -47,8 +47,10 @@ func main() {
 	e.POST("/logout", api.LogOut)
 
     authedG := e.Group("/api")
-    // authedG.GET("/party", api.GetParty)
+    authedG.GET("/parties/:id", api.GetParty)
     authedG.POST("/party", api.CreateParty)
+    
+    authedG.GET("/profiles/:id", api.GetProfile)
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
